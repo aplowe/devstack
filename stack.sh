@@ -1896,13 +1896,15 @@ if is_service_enabled key; then
             echo "catalog.RegionOne.object_store.name = Swift Service" >> $KEYSTONE_CATALOG
         fi
 
-        # Add quantum endpoints to service catalog if quantum is enabled
-        if is_service_enabled quantum; then
-            echo "catalog.RegionOne.network.publicURL = http://%SERVICE_HOST%:9696/" >> $KEYSTONE_CATALOG
-            echo "catalog.RegionOne.network.adminURL = http://%SERVICE_HOST%:9696/" >> $KEYSTONE_CATALOG
-            echo "catalog.RegionOne.network.internalURL = http://%SERVICE_HOST%:9696/" >> $KEYSTONE_CATALOG
-            echo "catalog.RegionOne.network.name = Quantum Service" >> $KEYSTONE_CATALOG
-        fi
+		# Add quantum endpoints to service catalog if quantum is enabled
+		if is_service_enabled quantum; then
+			echo "catalog.RegionOne.network.publicURL = http://%SERVICE_HOST%:9696/v1.0/tenants/$(tenant_id)s" >> $KEYSTONE_CATALOG
+			echo "catalog.RegionOne.network.adminURL = http://%SERVICE_HOST%:9696/" >> $KEYSTONE_CATALOG
+			echo "catalog.RegionOne.network.internalURL = http://%SERVICE_HOST%:9696/v1.0/tenants/$(tenant_id)s" >> $KEYSTONE_CATALOG
+			echo "catalog.RegionOne.network.tenantId = $(tenant_id)s" >> $KEYSTONE_CATALOG
+			echo "catalog.RegionOne.network.versionId = 1.0" >> $KEYSTONE_CATALOG
+			echo "catalog.RegionOne.network.name = Quantum Service" >> $KEYSTONE_CATALOG
+		fi
 
         sudo sed -e "
             s,%SERVICE_HOST%,$SERVICE_HOST,g;
@@ -2157,3 +2159,4 @@ fi
 
 # Indicate how long this took to run (bash maintained variable 'SECONDS')
 echo "stack.sh completed in $SECONDS seconds."
+
